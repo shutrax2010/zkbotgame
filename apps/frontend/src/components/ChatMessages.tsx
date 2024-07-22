@@ -1,15 +1,50 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useWebSocket } from '../hooks/useWebSocket';
 
-const ChatMessages: React.FC = () => {
+interface ChatMessagesProps {
+  messages: { sender: string; message: string }[];
+}
+
+const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
+  const { wsMessages, sendMessage, isConnected } = useWebSocket();
+  const [allMessages, setAllMessages] = useState<{ sender: string; message: string }[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [allMessages]);
+
+  useEffect(() => {
+    if (isConnected) {
+      sendMessage({
+        message_type: 'initialization',
+        game_type: 'tow_truth_a_lie',
+        sender: 'system'
+      });
+    }
+  }, [isConnected, sendMessage]);
+
+  useEffect(() => {
+    setAllMessages(prevMessages => [...prevMessages, ...messages]);
+  }, [messages]);
+
+  useEffect(() => {
+    setAllMessages(prevMessages => [...prevMessages, ...wsMessages]);
+  }, [wsMessages]);
+
   return (
-    <div className="flex flex-col flex-shrink overflow-y-auto bg-gray-800 text-white">
-      <p className="mb-4">hogehoge</p>
-      <p className="mb-4">hogehoge</p>
-      <p className="mb-4">hogehoge</p>
-      <p className="mb-4">hogehoge</p>
-      <p className="mb-4">hogehoge</p>
-      <p className="mb-4">hogehoge</p>
-      <p className="mb-4">hogehoge</p>
+    <div className="flex-1 overflow-y-auto bg-gray-800 text-white p-4">
+      <p>ゲームを開始します</p>
+      {allMessages.map((message, index) => (
+        <p key={index} className="mb-4">
+          <strong>{message.sender}:</strong> {message.message}
+        </p>
+      ))}
+      <div ref={messagesEndRef} />
     </div>
   );
 };
