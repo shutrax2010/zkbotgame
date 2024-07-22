@@ -20,7 +20,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
 
   useEffect(() => {
     if (isConnected) {
-      console.log('通信を行います');
       sendMessage({
         message_type: 'initialization',
         game_type: 'tow_truth_a_lie',
@@ -30,13 +29,10 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
   }, [isConnected, sendMessage]);
 
   useEffect(() => {
-    // messagesが更新されたときにallMessagesに追加
     setAllMessages(prevMessages => [...prevMessages, ...messages]);
-    console.log(allMessages)
   }, [messages]);
 
   useEffect(() => {
-    // wsMessagesが更新されたときにallMessagesに追加
     setAllMessages(prevMessages => [...prevMessages, ...wsMessages]);
   }, [wsMessages]);
 
