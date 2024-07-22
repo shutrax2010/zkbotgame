@@ -1,0 +1,8 @@
+{
+  "name": "zkbotgame",
+  "private": true,
+  "workspaces": [
+    "apps/frontend",
+    "apps/backend"
+  ]
+}
