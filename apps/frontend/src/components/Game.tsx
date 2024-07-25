@@ -7,7 +7,7 @@ import ChatMessages from './ChatMessages';
 
 const Game: React.FC = () => {
   const [messages, setMessages] = useState<{ sender: string; message: string }[]>([]);
-  const { sendWsMessage, wsMessage, wsStatus } = useWebSocket();
+  const { sendWsMessage, wsMessage } = useWebSocket();
   const [isFirstRender, setIsFirstRender] = useState(true);
 
   const addMessage = (sender: string, message: string) => {
@@ -22,7 +22,7 @@ const Game: React.FC = () => {
       sender: 'user1'
     });
 
-    // メッセージを追加
+    // ローカルにメッセージを追加
     addMessage('あなた', message);
   };
 

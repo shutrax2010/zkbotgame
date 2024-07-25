@@ -1,21 +1,37 @@
 import React, { useState } from 'react';
 
 interface ChatInputProps {
- isFirstRender: boolean,
- onStartGame: ()=> void,
- onSendMessage: (message: string) => void
+  isFirstRender: boolean;
+  onStartGame: () => void;
+  onSendMessage: (message: string) => void;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSendMessage }) => {
   const [input, setInput] = useState('');
+  const [isComposing, setIsComposing] = useState(false);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // 入力補完中の場合
+    if (isComposing) {
+      return;
+    }
+
+    // Enter押下の場合
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
 
   const handleSendMessage = () => {
-    if (input.trim()) {
-      onSendMessage(input);
-
-      // input初期化
-      setInput('');
+    // 入力内容が空の場合
+    if (!input.trim()) {
+      return;
     }
+
+    onSendMessage(input);
+
+    // 入力内容初期化
+    setInput('');
   };
 
   return (
@@ -30,6 +46,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onCompositionStart={() => setIsComposing(true)}
+            onCompositionEnd={() => setIsComposing(false)}
             className="flex-1 p-2 mr-2 rounded-full bg-gray-600 text-white"
             placeholder="メッセージを入力してください"
           />

@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface ChatMessagesProps {
   messages: { sender: string; message: string }[];
 }
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
-  const [allMessages, setAllMessages] = useState<{ sender: string; message: string }[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -14,18 +13,13 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [allMessages]);
-
-
-  useEffect(() => {
-    setAllMessages(prevMessages => [...prevMessages, ...messages]);
   }, [messages]);
 
   return (
     <div className="flex-1 overflow-y-auto bg-gray-800 text-white p-4">
-      {allMessages.map((message, index) => (
+      {messages.map((msg, index) => (
         <p key={index} className="mb-4">
-          <strong>{message.sender}:</strong> {message.message}
+          <strong>{msg.sender}:</strong> {msg.message}
         </p>
       ))}
       <div ref={messagesEndRef} />
