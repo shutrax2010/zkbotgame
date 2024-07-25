@@ -1,48 +1,63 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 
+type WebSocketStatus = 'connecting' | 'open' | 'closing' | 'closed' | 'error';
+
+interface MessageGameStart {
+  message_type: string;
+  game_type: string;
+  sender: string;
+}
+
+interface MessageChat {
+  message_type: string;
+  message: string;
+  sender: string;
+}
+
+type WebSocketMessageToSend = MessageGameStart | MessageChat;
+type WebSocketMessageToReceive = MessageChat;
+
 const WEBSOCKET_URL = 'ws://localhost:8080/api/ws';
 
-export const useWebSocket = () => {
+function useWebSocket() {
+  const [status, setStatus] = useState<WebSocketStatus>('connecting');
+  const [message, setMessage] = useState<WebSocketMessageToReceive | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
-  const [wsMessages, setWsMessages] = useState<{ sender: string, message: string }[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     const socket = new WebSocket(WEBSOCKET_URL);
     socketRef.current = socket;
 
-    socket.onopen = () => {
-      console.log('WebSocket connection established');
-      setIsConnected(true);
-    };
-
+    socket.onopen = () => setStatus('open');
     socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log('WebSocket message received:', data); // デバッグ用
-      setWsMessages((prevMessages) => [...prevMessages, data]);
+      try {
+        const data = JSON.parse(event.data) as WebSocketMessageToReceive;
+        setMessage(data);
+      } catch (error) {
+        console.error('Failed to parse message', error);
+      }
     };
-
-    socket.onclose = () => {
-      console.log('WebSocket connection closed');
-      setIsConnected(false);
-    };
-
-    socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+    socket.onclose = () => setStatus('closed');
+    socket.onerror = () => setStatus('error');
 
     return () => {
       socket.close();
     };
   }, []);
 
-  const sendMessage = useCallback((message: any) => {
-    if (isConnected && socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify(message));
+  const sendMessage = useCallback((data: WebSocketMessageToSend) => {
+    if (socketRef.current?.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(data));
     } else {
-      console.error('WebSocket is not open. Ready state is:', socketRef.current ? socketRef.current.readyState : 'null');
+      console.error('WebSocket is not open. ReadyState:', socketRef.current?.readyState);
     }
-  }, [isConnected]);
+  }, []);
 
-  return { wsMessages, sendMessage, isConnected };
-};
+  return {
+    wsStatus: status,
+    wsMessage: message,
+    sendWsMessage: sendMessage
+  };
+}
+
+export default useWebSocket;
