@@ -1,21 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { WebSocketMessageToSend, WebSocketMessageToReceive } from '../types/WSMessage';
 
 type WebSocketStatus = 'connecting' | 'open' | 'closing' | 'closed' | 'error';
-
-interface MessageGameStart {
-  message_type: string;
-  game_type: string;
-  sender: string;
-}
-
-interface MessageChat {
-  message_type: string;
-  message: string;
-  sender: string;
-}
-
-type WebSocketMessageToSend = MessageGameStart | MessageChat;
-type WebSocketMessageToReceive = MessageChat;
 
 const WEBSOCKET_URL = 'ws://localhost:8080/api/ws';
 
