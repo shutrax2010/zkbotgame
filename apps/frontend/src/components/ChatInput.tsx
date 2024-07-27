@@ -2,6 +2,25 @@ import React, { useState } from 'react';
 
 import { MessageChat } from '../utils/types/WSMessage';
 
+/**
+ * モード管理オブジェクト
+ */
+const modes = {
+  question: {
+    modeLabel: 'Question-mode',
+    buttonLabel: 'Q',
+    messageType: 'chat' as 'chat',
+    bgColor: 'bg-blue-500'
+  },
+
+  answer: {
+    modeLabel: 'Answer-mode',
+    buttonLabel: 'A',
+    messageType: 'answer' as 'answer',
+    bgColor: 'bg-red-500'
+  }
+};
+
 interface ChatInputProps {
   isFirstRender: boolean;
   onStartGame: () => void;
@@ -12,25 +31,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
   const [input, setInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [mode, setMode] = useState<'answer' | 'question'>('question');
-
-  /**
-   * モード管理オブジェクト
-   */
-  const modes = {
-    question: {
-      modeLabel: 'Question-mode',
-      buttonLabel: 'Q',
-      messageType: 'chat' as 'chat',
-      bgColor: 'bg-blue-500'
-    },
-
-    answer: {
-      modeLabel: 'Answer-mode',
-      buttonLabel: 'A',
-      messageType: 'answer' as 'answer',
-      bgColor: 'bg-red-500'
-    }
-  };
 
   /**
    * キーダウン時のイベントハンドラ
@@ -104,7 +104,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
               onKeyDown={handleKeyDown}
               onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={() => setIsComposing(false)}
-              className="flex-1 p-2 ml-2 mr-2 rounded-full bg-gray-600 text-white"
+              className="flex-1 p-2 mx-2 rounded-full bg-gray-600 text-white"
               placeholder="Type your Message"
             />
 
