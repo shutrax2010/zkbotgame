@@ -104,7 +104,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
               onKeyDown={handleKeyDown}
               onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={() => setIsComposing(false)}
-              className="flex-1 p-2 mx-2 rounded-full bg-gray-600 text-white"
+              className="flex-1 p-2 px-4 mx-2 rounded-full bg-gray-600 text-white"
               placeholder="Type your Message"
             />
 
