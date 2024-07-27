@@ -11,7 +11,26 @@ interface ChatInputProps {
 const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSendMessage }) => {
   const [input, setInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
-  const [mode, setMode] = useState<'Answer-mode' | 'Question-mode'>('Question-mode');
+  const [mode, setMode] = useState<'answer' | 'question'>('question');
+
+  /**
+   * モード管理オブジェクト
+   */
+  const modes = {
+    question: {
+      modeLabel: 'Question-mode',
+      buttonLabel: 'Q',
+      messageType: 'chat' as 'chat',
+      bgColor: 'bg-blue-500'
+    },
+
+    answer: {
+      modeLabel: 'Answer-mode',
+      buttonLabel: 'A',
+      messageType: 'answer' as 'answer',
+      bgColor: 'bg-red-500'
+    }
+  };
 
   /**
    * キーダウン時のイベントハンドラ
@@ -40,7 +59,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
     }
 
     onSendMessage({
-      message_type: mode === 'Answer-mode' ? 'answer' : 'chat',
+      message_type: modes[mode].messageType,
       message: input,
       sender: 'user1'
     });
@@ -53,15 +72,16 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
    * モード切替
    */
   const toggleMode = () => {
-    setMode(prevMode => (prevMode === 'Question-mode' ? 'Answer-mode' : 'Question-mode'));
+    setMode(prevMode => (prevMode === 'question' ? 'answer' : 'question'));
   };
 
   return (
     <div className="relative flex flex-col">
       <div className="absolute bottom-16 mb-2 flex">
         <div className="relative">
-          <p className="text-white bg-red-500 px-2 py-1">
-            {mode === 'Answer-mode' ? 'Answer-mode' : 'Question-mode'}
+          <p className={`text-white px-2 py-1 ${modes[mode].bgColor}`}>
+            {/* モード表示 */}
+            {modes[mode].modeLabel}
           </p>
         </div>
       </div>
@@ -69,7 +89,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
       <div className="flex items-center bg-gray-700 p-4">
         {isFirstRender ? (
           <button onClick={onStartGame} className="flex-1 p-2 rounded-full bg-gray-600 text-white">
-            ゲームを開始
+            Click to Start
           </button>
         ) : (
           <>
@@ -85,11 +105,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
               onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={() => setIsComposing(false)}
               className="flex-1 p-2 ml-2 mr-2 rounded-full bg-gray-600 text-white"
-              placeholder="メッセージを入力してください"
+              placeholder="Type your Message"
             />
 
-            <button onClick={handleSendMessage} className="p-2 w-10 h-10 bg-blue-500 rounded-full text-white">
-              送
+            <button
+              onClick={handleSendMessage}
+              className={`p-2 w-10 h-10 rounded-full text-white ${modes[mode].bgColor}`}
+            >
+              {modes[mode].buttonLabel}
             </button>
           </>
         )}

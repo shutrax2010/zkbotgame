@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { MessageChat } from '../utils/types/WSMessage';
+import { MessageChat, MessageResult } from '../utils/types/WSMessage';
 import useWebSocket from '../utils/hooks/useWebSocket';
 
 import ChatInput from './ChatInput';
@@ -34,7 +34,7 @@ const Game: React.FC = () => {
     sendWsMessage(messageObject);
 
     // ローカルにメッセージを追加
-    addMessage('あなた', messageObject.message);
+    addMessage('You', messageObject.message);
   };
 
   /**
@@ -51,20 +51,19 @@ const Game: React.FC = () => {
   };
 
   useEffect(() => {
-    if (wsMessage) {
-      if (wsMessage.message_type === 'result') {
-        const resultMessage = wsMessage;
-        if (resultMessage.result === 'success') {
-          setModalMessage('おめでとうございます！');
-        } else if (resultMessage.result === 'faild') {
-          setModalMessage('残念でした！');
-        }
-
-        setIsModalVisible(true);
-      } else {
-        addMessage(wsMessage.sender, wsMessage.message);
-      }
+    if (!wsMessage) {
+      return;
     }
+
+    if (wsMessage.message_type === 'result') {
+      const resultMessage = wsMessage as MessageResult;
+      setModalMessage(resultMessage.result === 'success' ? 'Congratulations!' : 'Better luck next time!');
+      setIsModalVisible(true);
+
+      return;
+    }
+
+    addMessage(wsMessage.sender, wsMessage.message);
   }, [wsMessage]);
 
   const closeModal = () => {

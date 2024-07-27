@@ -1,4 +1,5 @@
 import React from 'react';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface ModalProps {
   message: string | null;
@@ -17,11 +18,12 @@ const Modal: React.FC<ModalProps> = ({ message, onClose }) => {
       className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
       onClick={handleBackgroundClick}
     >
-      <div className="flex flex-col justify-center items-center w-1/2 h-5/6 bg-white p-6 rounded shadow-lg">
+      <div className="relative flex flex-col justify-center items-center w-1/2 h-5/6 bg-white p-6 rounded shadow-lg">
+        {/* 閉じるアイコン */}
+        <CloseIcon className="absolute top-4 left-4 cursor-pointer text-gray-700" onClick={onClose} />
+
+        {/* メッセージ */}
         <p>{message}</p>
-        <button onClick={onClose} className="mt-4 p-2 bg-blue-500 text-white rounded">
-          閉じる
-        </button>
       </div>
     </div>
   );
