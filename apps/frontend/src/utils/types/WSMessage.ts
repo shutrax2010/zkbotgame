@@ -18,12 +18,10 @@ export interface MessageChat {
 
 /**
  * 結果メッセージの型定義
- *
- * TODO: failedが正(要API側修正)
  */
 export interface MessageResult {
   message_type: 'result';
-  result: 'success' | 'faild';
+  result: 'success' | 'failed';
   sender: string;
 }
 
