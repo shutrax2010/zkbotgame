@@ -28,13 +28,16 @@ const Game: React.FC = () => {
    * メッセージ送信ハンドラ
    *
    * @param {Message} messageObject - 送信するメッセージオブジェクト
+   * @param {boolean} isShowMessage - メッセージを表示するか
    */
-  const handleSendMessage = (messageObject: MessageChat) => {
+  const handleSendMessage = (messageObject: MessageChat, isShowMessage: boolean) => {
     // WebSocketにメッセージを送信
     sendWsMessage(messageObject);
 
     // ローカルにメッセージを追加
-    addMessage('You', messageObject.message);
+    if (isShowMessage) {
+      addMessage('You', messageObject.message);
+    }
   };
 
   /**

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import { MessageChat } from '../utils/types/WSMessage';
 
+import Button from './Button';
+
 /**
  * モード管理オブジェクト
  */
@@ -21,16 +23,35 @@ const modes = {
   }
 };
 
+/**
+ * 選択肢管理オブジェクト
+ */
+const initialOptions = {
+  one: {
+    value: '1',
+    isSelected: false
+  },
+  two: {
+    value: '2',
+    isSelected: false
+  },
+  three: {
+    value: '3',
+    isSelected: false
+  }
+};
+
 interface ChatInputProps {
   isFirstRender: boolean;
   onStartGame: () => void;
-  onSendMessage: (messageObject: MessageChat) => void;
+  onSendMessage: (messageObject: MessageChat, isShowMessage: boolean) => void;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSendMessage }) => {
   const [input, setInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [mode, setMode] = useState<'answer' | 'question'>('question');
+  const [options, setOptions] = useState(initialOptions);
 
   /**
    * キーダウン時のイベントハンドラ
@@ -50,22 +71,53 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
   };
 
   /**
+   * 選択肢選択時のイベントハンドラ
+   */
+  const handleSelectNumber = (key: 'one' | 'two' | 'three') => {
+    // 選択状態をリセットして、押下されたオプションを選択する
+    setOptions(prevOptions => ({
+      ...prevOptions,
+      one: { ...prevOptions.one, isSelected: key === 'one' },
+      two: { ...prevOptions.two, isSelected: key === 'two' },
+      three: { ...prevOptions.three, isSelected: key === 'three' }
+    }));
+  };
+
+  /**
    * メッセージ送信
    */
   const handleSendMessage = () => {
-    // 入力内容が空の場合
-    if (!input.trim()) {
+    // Question-mode、かつ入力内容が空の場合
+    if (mode === 'question' && !input.trim()) {
       return;
     }
 
-    onSendMessage({
-      message_type: modes[mode].messageType,
-      message: input,
-      sender: 'user1'
-    });
+    let messageToSend = '';
+
+    // Answer-modeの場合、選択されたオプションの値を取得
+    if (mode === 'answer') {
+      const selectedOption = Object.values(options).find(option => option.isSelected);
+      if (!selectedOption) {
+        return; // 何も選択されていない場合、送信しない
+      }
+
+      messageToSend = selectedOption.value;
+    } else {
+      messageToSend = input;
+    }
+
+    onSendMessage(
+      {
+        message_type: modes[mode].messageType,
+        message: messageToSend,
+        sender: 'user1'
+      },
+      mode === 'question'
+    );
 
     // 入力内容初期化
     setInput('');
+    setOptions(initialOptions);
   };
 
   /**
@@ -88,32 +140,46 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
 
       <div className="flex items-center bg-gray-700 p-4">
         {isFirstRender ? (
-          <button onClick={onStartGame} className="flex-1 p-2 rounded-full bg-gray-600 text-white">
-            Click to Start
-          </button>
+          <Button value="Click to Start" onClick={onStartGame} className="flex-1 bg-gray-600" />
         ) : (
           <>
-            <button onClick={toggleMode} className="p-2 w-30 h-10 bg-purple-500 rounded-full text-white">
-              Q ↔︎ A
-            </button>
+            {/* 切り替えボタン */}
+            <Button value="Q ↔︎ A" onClick={toggleMode} className=" w-30 bg-purple-500" />
 
-            <input
-              type="text"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              onCompositionStart={() => setIsComposing(true)}
-              onCompositionEnd={() => setIsComposing(false)}
-              className="flex-1 p-2 px-4 mx-2 rounded-full bg-gray-600 text-white"
-              placeholder="Type your Message"
-            />
+            {/* 入力部分 */}
+            {mode === 'question' ? (
+              <input
+                type="text"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onCompositionStart={() => setIsComposing(true)}
+                onCompositionEnd={() => setIsComposing(false)}
+                className="flex-1 p-2 px-4 mx-2 rounded-full bg-gray-600 text-white"
+                placeholder="Type your Message"
+              />
+            ) : (
+              <div className="flex flex-1 mx-2 justify-center">
+                {Object.keys(options).map(key => {
+                  const optionKey = key as keyof typeof options;
+                  return (
+                    <Button
+                      key={optionKey}
+                      value={options[optionKey].value}
+                      onClick={() => handleSelectNumber(optionKey)}
+                      className={`mx-1 w-1/3 ${options[optionKey].isSelected ? 'bg-red-500' : 'bg-gray-600'}`}
+                    />
+                  );
+                })}
+              </div>
+            )}
 
-            <button
+            {/* 送信ボタン */}
+            <Button
+              value={modes[mode].buttonLabel}
               onClick={handleSendMessage}
-              className={`p-2 w-10 h-10 rounded-full text-white ${modes[mode].bgColor}`}
-            >
-              {modes[mode].buttonLabel}
-            </button>
+              className={`w-10 ${modes[mode].bgColor}`}
+            />
           </>
         )}
       </div>
