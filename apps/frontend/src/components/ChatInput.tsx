@@ -140,7 +140,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
 
       <div className="flex items-center bg-gray-700 p-4">
         {isFirstRender ? (
-          <Button value="Click to Start" onClick={onStartGame} className="flex-1 bg-gray-600" />
+          <Button value="CLICK to START" onClick={onStartGame} className="flex-1 bg-gray-600" />
         ) : (
           <>
             {/* 切り替えボタン */}
@@ -156,7 +156,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
                 onCompositionStart={() => setIsComposing(true)}
                 onCompositionEnd={() => setIsComposing(false)}
                 className="flex-1 p-2 px-4 mx-2 rounded-full bg-gray-600 text-white"
-                placeholder="Type your Message"
+                placeholder="Type your message"
               />
             ) : (
               <div className="flex flex-1 mx-2 justify-center">
