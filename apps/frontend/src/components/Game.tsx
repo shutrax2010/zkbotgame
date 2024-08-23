@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
 
 import { MessageChat, MessageResult } from '../utils/types/WSMessage';
+import { ModeType } from '../utils/types/modes';
 import useWebSocket from '../utils/hooks/useWebSocket';
 
 import ChatInput from './ChatInput';
+import ChatInputHelper from './ChatInputHelper';
 import ChatMessages from './ChatMessages';
 import Modal from './Modal';
 
 const Game: React.FC = () => {
   const [messages, setMessages] = useState<{ sender: string; message: string }[]>([]);
-  const { sendWsMessage, wsMessage } = useWebSocket();
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [modalMessage, setModalMessage] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [mode, setMode] = useState<ModeType>('question');
+  const [initialMessage, setInitialMessage] = useState('');
+
+  const { sendWsMessage, wsMessage } = useWebSocket();
 
   /**
    * メッセージ追加処理
@@ -58,6 +63,12 @@ const Game: React.FC = () => {
       return;
     }
 
+    // 最初のメッセージ
+    if (wsMessage.message_type === 'initialization') {
+      setInitialMessage(wsMessage.message);
+    }
+
+    // 回答の結果表示
     if (wsMessage.message_type === 'result') {
       const resultMessage = wsMessage as MessageResult;
       setModalMessage(resultMessage.result === 'success' ? 'Congratulations!' : 'Better luck next time!');
@@ -80,12 +91,27 @@ const Game: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-1 flex-col justify-end bg-gray-800">
+    <div className="relative flex flex-1 flex-col justify-end bg-gray-800">
       {/* モーダル */}
       {isModalVisible && <Modal message={modalMessage} onClose={closeModal} />}
 
       <ChatMessages messages={messages} />
-      <ChatInput isFirstRender={isFirstRender} onStartGame={handleStartGame} onSendMessage={handleSendMessage} />
+
+      {!isFirstRender && (
+        <div className="relative z-10">
+          <ChatInputHelper mode={mode} message={initialMessage} className="absolute w-full bottom-full z-10" />
+        </div>
+      )}
+
+      <div className="h-18 relative z-20">
+        <ChatInput
+          isFirstRender={isFirstRender}
+          onStartGame={handleStartGame}
+          onSendMessage={handleSendMessage}
+          mode={mode}
+          setMode={setMode}
+        />
+      </div>
     </div>
   );
 };

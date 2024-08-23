@@ -16,7 +16,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-gray-800 text-white p-8">
+    <div className="flex-1 overflow-y-auto bg-gray-800 text-white p-6">
       {messages.map((msg, index) => (
         <div key={index} className={`mb-4 ${msg.sender === 'You' ? 'text-right' : 'text-left'}`}>
           {/* sender */}
