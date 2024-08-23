@@ -1,8 +1,11 @@
 import React from 'react';
 
+import { useWallet } from '../contexts/WalletContext';
 import viteLogo from '/vite.svg';
 
 const Header: React.FC = () => {
+  const { publicKey, isConnected } = useWallet();
+
   return (
     <div
       className="
@@ -19,9 +22,9 @@ const Header: React.FC = () => {
         <p className="text-2xl ml-2">ZKP</p>
       </div>
 
-      {/* MetaMaskのpublic address*/}
+      {/* Auroのpublic address*/}
       <div className="wallet-id">
-        <p className="text-1xl">public address</p>
+        <p className="text-1xl">public addless: {isConnected ? publicKey : 'Not connected'}</p>
       </div>
     </div>
   );
