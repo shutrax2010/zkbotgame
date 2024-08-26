@@ -1,10 +1,19 @@
 /**
- * ゲーム開始メッセージの型定義
+ * ゲーム開始メッセージ(リクエスト)の型定義
  */
-export interface MessageGameStart {
+export interface MessageGameStartRequest {
   message_type: 'initialization';
   game_type: string;
-  sender: string;
+  sender: 'system';
+}
+
+/**
+ * ゲーム開始メッセージ(レスポンス)の型定義
+ */
+export interface MessageGameStartResponse {
+  message_type: 'initialization';
+  message: string;
+  sender: 'bot';
 }
 
 /**
@@ -22,8 +31,8 @@ export interface MessageChat {
 export interface MessageResult {
   message_type: 'result';
   result: 'success' | 'failed';
-  sender: string;
+  sender: 'bot';
 }
 
-export type WebSocketMessageToSend = MessageGameStart | MessageChat;
-export type WebSocketMessageToReceive = MessageChat | MessageResult;
+export type WebSocketMessageToSend = MessageGameStartRequest | MessageChat;
+export type WebSocketMessageToReceive = MessageGameStartResponse | MessageChat | MessageResult;

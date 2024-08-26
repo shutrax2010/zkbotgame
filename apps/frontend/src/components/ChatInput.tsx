@@ -1,27 +1,9 @@
 import React, { useState } from 'react';
 
 import { MessageChat } from '../utils/types/WSMessage';
+import { modes, ModeType } from '../utils/types/modes';
 
 import Button from './Button';
-
-/**
- * モード管理オブジェクト
- */
-const modes = {
-  question: {
-    modeLabel: 'Question-mode',
-    buttonLabel: 'Q',
-    messageType: 'chat' as 'chat',
-    bgColor: 'bg-blue-500'
-  },
-
-  answer: {
-    modeLabel: 'Answer-mode',
-    buttonLabel: 'A',
-    messageType: 'answer' as 'answer',
-    bgColor: 'bg-red-500'
-  }
-};
 
 /**
  * 選択肢管理オブジェクト
@@ -45,12 +27,13 @@ interface ChatInputProps {
   isFirstRender: boolean;
   onStartGame: () => void;
   onSendMessage: (messageObject: MessageChat, isShowMessage: boolean) => void;
+  mode: ModeType;
+  setMode: React.Dispatch<React.SetStateAction<ModeType>>;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSendMessage }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSendMessage, mode, setMode }) => {
   const [input, setInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
-  const [mode, setMode] = useState<'answer' | 'question'>('question');
   const [options, setOptions] = useState(initialOptions);
 
   /**
@@ -128,61 +111,50 @@ const ChatInput: React.FC<ChatInputProps> = ({ isFirstRender, onStartGame, onSen
   };
 
   return (
-    <div className="relative flex flex-col">
-      <div className="absolute bottom-16 mb-2 flex">
-        <div className="relative">
-          <p className={`text-white px-2 py-1 ${modes[mode].bgColor}`}>
-            {/* モード表示 */}
-            {modes[mode].modeLabel}
-          </p>
-        </div>
-      </div>
+    <div className="flex items-center bg-gray-700 p-4">
+      {isFirstRender ? (
+        <Button value="CLICK to START" onClick={onStartGame} className="flex-1 bg-gray-600" />
+      ) : (
+        <>
+          {/* 切り替えボタン */}
+          <Button value="Q ↔︎ A" onClick={toggleMode} className=" w-30 bg-purple-500" />
 
-      <div className="flex items-center bg-gray-700 p-4">
-        {isFirstRender ? (
-          <Button value="CLICK to START" onClick={onStartGame} className="flex-1 bg-gray-600" />
-        ) : (
-          <>
-            {/* 切り替えボタン */}
-            <Button value="Q ↔︎ A" onClick={toggleMode} className=" w-30 bg-purple-500" />
-
-            {/* 入力部分 */}
-            {mode === 'question' ? (
-              <input
-                type="text"
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onCompositionStart={() => setIsComposing(true)}
-                onCompositionEnd={() => setIsComposing(false)}
-                className="flex-1 p-2 px-4 mx-2 rounded-full bg-gray-600 text-white"
-                placeholder="Type your message"
-              />
-            ) : (
-              <div className="flex flex-1 mx-2 justify-center">
-                {Object.keys(options).map(key => {
-                  const optionKey = key as keyof typeof options;
-                  return (
-                    <Button
-                      key={optionKey}
-                      value={options[optionKey].value}
-                      onClick={() => handleSelectNumber(optionKey)}
-                      className={`mx-1 w-1/3 ${options[optionKey].isSelected ? 'bg-red-500' : 'bg-gray-600'}`}
-                    />
-                  );
-                })}
-              </div>
-            )}
-
-            {/* 送信ボタン */}
-            <Button
-              value={modes[mode].buttonLabel}
-              onClick={handleSendMessage}
-              className={`w-10 ${modes[mode].bgColor}`}
+          {/* 入力部分 */}
+          {mode === 'question' ? (
+            <input
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onCompositionStart={() => setIsComposing(true)}
+              onCompositionEnd={() => setIsComposing(false)}
+              className="flex-1 p-2 px-4 mx-2 rounded-full bg-gray-600 text-white"
+              placeholder="Type your message"
             />
-          </>
-        )}
-      </div>
+          ) : (
+            <div className="flex flex-1 mx-2 justify-center">
+              {Object.keys(options).map(key => {
+                const optionKey = key as keyof typeof options;
+                return (
+                  <Button
+                    key={optionKey}
+                    value={options[optionKey].value}
+                    onClick={() => handleSelectNumber(optionKey)}
+                    className={`mx-1 w-1/3 ${options[optionKey].isSelected ? 'bg-red-500' : 'bg-gray-600'}`}
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* 送信ボタン */}
+          <Button
+            value={modes[mode].buttonLabel}
+            onClick={handleSendMessage}
+            className={`w-10 ${modes[mode].bgColor}`}
+          />
+        </>
+      )}
     </div>
   );
 };
