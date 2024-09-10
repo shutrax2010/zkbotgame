@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-import { MessageChat, MessageResult } from '../utils/types/WSMessage';
-import useWebSocket from '../utils/hooks/useWebSocket';
+import { MessageChat, MessageResult } from '@interfaces/WSMessage';
+import useWebSocket from '@hooks/useWebSocket';
 
-import ChatInput from './ChatInput';
-import ChatMessages from './ChatMessages';
-import Modal from './Modal';
+import ChatInput from '@components/ChatInput';
+import ChatMessages from '@components/ChatMessages';
+import Modal from '@components/Modal';
+import MainLayout from '@components/templates/MainLayout';
 
 const Game: React.FC = () => {
   const [messages, setMessages] = useState<{ sender: string; message: string }[]>([]);
@@ -80,13 +81,15 @@ const Game: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-1 flex-col justify-end bg-gray-800">
-      {/* モーダル */}
-      {isModalVisible && <Modal message={modalMessage} onClose={closeModal} />}
+    <MainLayout>
+      <div className="flex flex-1 flex-col justify-end bg-gray-800">
+        {/* モーダル */}
+        {isModalVisible && <Modal message={modalMessage} onClose={closeModal} />}
 
-      <ChatMessages messages={messages} />
-      <ChatInput isFirstRender={isFirstRender} onStartGame={handleStartGame} onSendMessage={handleSendMessage} />
-    </div>
+        <ChatMessages messages={messages} />
+        <ChatInput isFirstRender={isFirstRender} onStartGame={handleStartGame} onSendMessage={handleSendMessage} />
+      </div>
+    </MainLayout>
   );
 };
 

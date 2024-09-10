@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import { WalletProvider } from './contexts/WalletContext';
+import { WalletProvider } from '@contexts/WalletContext';
 
-import GamePage from './components/GamePage';
-import Top from './components/Top';
+import TwoTruthAlie from '@components/pages/TwoTruthALie/TwoTruthALie';
+import Top from '@components/pages/Top/Top';
 
 const App: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Top />} />
-          <Route path="/game" element={<GamePage />} />
+          <Route path="/game/towTruthALie" element={<TwoTruthAlie />} />
         </Routes>
       </Router>
     </WalletProvider>
