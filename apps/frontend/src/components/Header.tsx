@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useWallet } from '@contexts/WalletContext';
-import viteLogo from '/vite.svg';
+import zkchatArenaLogo from '/zkChatArena.png';
 
 const Header: React.FC = () => {
   const { publicKey, isConnected } = useWallet();
@@ -15,11 +15,10 @@ const Header: React.FC = () => {
         justify-between items-center
       "
     >
-      {/* TODO: 差し替え */}
-      {/* ロゴ/タイトル */}
-      <div className="flex flex-row">
-        <img src={viteLogo} className="logo" alt="Vite logo" />
-        <p className="text-2xl ml-2">ZKP</p>
+      {/* アプリロゴとタイトル */}
+      <div className="flex flex-row items-center">
+        <img src={zkchatArenaLogo} className="logo h-14" alt="Vite logo" />
+        <p className="text-2xl ml-2">zkChat Arena</p>
       </div>
 
       {/* Auroのpublic address*/}
