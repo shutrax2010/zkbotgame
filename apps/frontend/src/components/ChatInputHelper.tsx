@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { modes, ModeType } from '../utils/types/modes';
+import { modes, ModeType } from '@interfaces/modes';
 
 interface ChatInputHelperProps {
   mode: ModeType;

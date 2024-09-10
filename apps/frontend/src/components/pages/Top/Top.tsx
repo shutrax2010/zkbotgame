@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useWallet } from '../contexts/WalletContext';
+import { useWallet } from '@contexts/WalletContext';
 
 const Top: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const Top: React.FC = () => {
     await connectWallet();
 
     // 画面遷移
-    navigate('/game');
+    navigate('/game/twoTruthALie');
   };
 
   return (
