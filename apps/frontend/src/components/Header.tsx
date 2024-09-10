@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useWallet } from '../contexts/WalletContext';
+import { useWallet } from '@contexts/WalletContext';
 import viteLogo from '/vite.svg';
 
 const Header: React.FC = () => {

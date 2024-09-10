@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import { MessageChat, MessageResult } from '../utils/types/WSMessage';
-import { ModeType } from '../utils/types/modes';
-import useWebSocket from '../utils/hooks/useWebSocket';
+import { MessageChat, MessageResult } from '@interfaces/WSMessage';
+import { ModeType } from '@interfaces/modes';
+import useWebSocket from '@hooks/useWebSocket';
 
-import ChatInput from './ChatInput';
-import ChatInputHelper from './ChatInputHelper';
-import ChatMessages from './ChatMessages';
-import Modal from './Modal';
+import ChatInput from '@components/ChatInput';
+import ChatInputHelper from '@components/ChatInputHelper';
+import ChatMessages from '@components/ChatMessages';
+import MainLayout from '@components/templates/MainLayout';
+import Modal from '@components/Modal';
 
 const Game: React.FC = () => {
   const [messages, setMessages] = useState<{ sender: string; message: string }[]>([]);
@@ -91,28 +92,30 @@ const Game: React.FC = () => {
   };
 
   return (
-    <div className="relative flex flex-1 flex-col justify-end bg-gray-800">
-      {/* モーダル */}
-      {isModalVisible && <Modal message={modalMessage} onClose={closeModal} />}
+    <MainLayout>
+      <div className="relative flex flex-1 flex-col justify-end bg-gray-800">
+        {/* モーダル */}
+        {isModalVisible && <Modal message={modalMessage} onClose={closeModal} />}
 
-      <ChatMessages messages={messages} />
+        <ChatMessages messages={messages} />
 
-      {!isFirstRender && (
-        <div className="relative z-10">
-          <ChatInputHelper mode={mode} message={initialMessage} className="absolute w-full bottom-full z-10" />
+        {!isFirstRender && (
+          <div className="relative z-10">
+            <ChatInputHelper mode={mode} message={initialMessage} className="absolute w-full bottom-full z-10" />
+          </div>
+        )}
+
+        <div className="h-18 relative z-20">
+          <ChatInput
+            isFirstRender={isFirstRender}
+            onStartGame={handleStartGame}
+            onSendMessage={handleSendMessage}
+            mode={mode}
+            setMode={setMode}
+          />
         </div>
-      )}
-
-      <div className="h-18 relative z-20">
-        <ChatInput
-          isFirstRender={isFirstRender}
-          onStartGame={handleStartGame}
-          onSendMessage={handleSendMessage}
-          mode={mode}
-          setMode={setMode}
-        />
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

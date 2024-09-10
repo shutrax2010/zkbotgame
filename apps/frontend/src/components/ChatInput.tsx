@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
-import { MessageChat } from '../utils/types/WSMessage';
-import { modes, ModeType } from '../utils/types/modes';
+import { MessageChat } from '@interfaces/WSMessage';
+import { modes, ModeType } from '@interfaces/modes';
 
-import Button from './Button';
+import Button from '@components/Button';
 
 /**
  * 選択肢管理オブジェクト

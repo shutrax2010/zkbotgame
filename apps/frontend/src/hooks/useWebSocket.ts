@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { WebSocketMessageToSend, WebSocketMessageToReceive } from '../types/WSMessage';
+import { WebSocketMessageToSend, WebSocketMessageToReceive } from '@interfaces/WSMessage';
 
 type WebSocketStatus = 'connecting' | 'open' | 'closing' | 'closed' | 'error';
 
